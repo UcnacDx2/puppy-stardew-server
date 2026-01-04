@@ -13,6 +13,12 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
+# Resolution environment variables with defaults
+# 分辨率相关环境变量，带默认值；刷新率默认24
+RESOLUTION_WIDTH=${RESOLUTION_WIDTH:-1280}
+RESOLUTION_HEIGHT=${RESOLUTION_HEIGHT:-720}
+REFRESH_RATE=${REFRESH_RATE:-24}
+
 # Logging functions
 log_info() {
     echo -e "${GREEN}[Puppy-Stardew]${NC} $1"
@@ -88,6 +94,64 @@ download_game_via_steam() {
 }
 
 # =============================================
+# GPU-related helper function
+# 将使用 GPU 的逻辑封装为函数，供 root 阶段和 steam 阶段调用
+# =============================================
+start_gpu_xorg() {
+    # 参数（可选）：$1 = context 描述（如 "root" 或 "steam"），仅用于日志
+    local context=${1:-"unknown"}
+    if [ "$USE_GPU" != "true" ]; then
+        log_warn "USE_GPU != true，跳过 GPU 启动逻辑（context: $context）"
+        return 3
+    fi
+
+    log_info "USE_GPU=true -> 在 ${context} 阶段尝试启动 Xorg :99 以使用核显（如果容器可访问 /dev/dri）"
+    rm -f /tmp/.X99-lock /tmp/.X11-unix/X99 2>/dev/null || true
+    if [ -e /dev/dri/renderD128 ] || ls /dev/dri 2>/dev/null | grep -q .; then
+        log_info "检测到 /dev/dri，准备启动 Xorg :99 (context: $context)"
+
+        # 确保 X socket 目录存在且权限允许创建
+        mkdir -p /tmp/.X11-unix
+        chmod 1777 /tmp/.X11-unix
+
+        # 确保 Xorg 日志目录存在（写入为 root）
+        mkdir -p /home/steam/.local/share/xorg
+        # 在 root 上设置目录拥有者为 root:root（在 steam 上不需要）
+        if [ "$(id -u)" = "0" ]; then
+            chown root:root /home/steam/.local/share/xorg 2>/dev/null || true
+        fi
+
+        # 以当前用户后台启动 Xorg，日志写入到 /home/steam/.local/share/xorg/Xorg.0.log
+        Xorg -noreset +extension GLX +extension RANDR :99 -logfile /home/steam/.local/share/xorg/Xorg.0.log &
+        sleep 2
+
+        # 尝试设置 Xorg 分辨率为来自环境变量的值（刷新率使用 REFRESH_RATE）
+        DISPLAY=:99 /home/steam/scripts/set-resolution.sh "${RESOLUTION_WIDTH}" "${RESOLUTION_HEIGHT}" "${REFRESH_RATE}" || {
+            log_warn "设置分辨率失败（context: $context），将继续（可能使用当前 X server 大小）"
+        }
+
+        # 稍微等一会以确保分辨率生效
+        sleep 1
+
+        if pgrep -x Xorg >/dev/null 2>&1; then
+            export DISPLAY=${DISPLAY:-:99}
+            log_info "✓ Xorg started on :99 (context: $context)"
+            if command -v glxinfo >/dev/null 2>&1; then
+                log_info "OpenGL renderer:"
+                glxinfo | grep -i "OpenGL renderer" | head -n 1 || true
+            fi
+            return 0
+        else
+            log_warn "Xorg 未能以 ${context} 启动，返回非零以便上层回退"
+            return 2
+        fi
+    else
+        log_warn "/dev/dri 未检测到或不可访问，跳过 Xorg 启动（context: $context）"
+        return 1
+    fi
+}
+
+# =============================================
 # Phase 1: Root Initialization (Permission Fixes)
 # 阶段1：Root 初始化（权限修复）
 # =============================================
@@ -137,11 +201,19 @@ if [ "$(id -u)" = "0" ]; then
         log_info "✅ All permissions correct"
     fi
 
+    # 如果启用了 GPU 加速并且宿主 /dev/dri 已透传，尝试在 root 阶段启动 Xorg（以便 Xorg 可以访问 /dev/tty0 和创建 /tmp/.X11-unix）
+    if [ "$USE_GPU" = "true" ]; then
+        # 使用封装后的函数尝试启动 Xorg（root 上下文）
+        start_gpu_xorg "root" || {
+            log_warn "root 阶段 GPU 启动尝试未成功，将在 steam 阶段尝试回退逻辑"
+        }
+    fi
+
     log_info "Switching to steam user..."
     log_info "================================================"
 
     # Re-execute this script as steam user
-    exec runuser -u steam -- "$0" "$@"
+    exec runuser -u steam -- env DISPLAY="$DISPLAY" "$0" "$@"
 fi
 
 # =============================================
@@ -243,30 +315,54 @@ fi
 # Step 5: Setup virtual display
 log_step "Step 6: Starting virtual display..."
 
-rm -f /tmp/.X99-lock /tmp/.X11-unix/X99 2>/dev/null || true
-Xvfb :99 -screen 0 1280x720x24 -ac +extension GLX +render -noreset &
-export DISPLAY=:99
-sleep 3
+# 首选：如果有已经运行的 Xorg（root 或宿主），使用它；否则在 steam 阶段按需回退到 Xvfb
+START_XVFB_FALLBACK=false
 
-log_info "✓ Virtual display started on :99 (1280x720)"
+# 如果 root 阶段已经成功启动了 Xorg，则此处会发现 Xorg 进程并使用 :99
+if pgrep -x Xorg >/dev/null 2>&1; then
+    export DISPLAY=${DISPLAY:-:99}
+    log_info "检测到 Xorg 进程，使用 DISPLAY=${DISPLAY}"
+    if command -v glxinfo >/dev/null 2>&1; then
+        log_info "OpenGL renderer:"
+        glxinfo | grep -i "OpenGL renderer" | head -n 1 || true
+    fi
+else
+    # 否则在 steam 阶段尝试使用 /dev/dri（若可用）再启动 Xorg（少数环境可能需要这样启动）
+    if [ "$USE_GPU" = "true" ]; then
+        log_warn "steam 阶段 Xorg 启动失败或不可用，回退到 Xvfb（软件渲染）"
+        START_XVFB_FALLBACK=true
+    else
+        START_XVFB_FALLBACK=true
+    fi
+fi
+
+# 回退：启动 Xvfb（软件渲染）以保证兼容性
+if [ "$START_XVFB_FALLBACK" = "true" ]; then
+    log_info "启动 Xvfb（软件渲染后备）..."
+    rm -f /tmp/.X99-lock /tmp/.X11-unix/X99 2>/dev/null || true
+    Xvfb :99 -screen 0 "${RESOLUTION_WIDTH}x${RESOLUTION_HEIGHT}x24" -ac +extension GLX +render -noreset &
+    export DISPLAY=${DISPLAY:-:99}
+    sleep 3
+    log_info "✓ Virtual display started on ${DISPLAY} (${RESOLUTION_WIDTH}x${RESOLUTION_HEIGHT})"
+fi
 
 # Step 6: Start VNC server (optional)
 if [ "$ENABLE_VNC" = "true" ]; then
     log_step "Step 7: Starting VNC server..."
-
+    echo "DISPLAY is set to: $DISPLAY"
     VNC_PASSWORD=${VNC_PASSWORD:-"stardew1"}
 
     if [ ${#VNC_PASSWORD} -gt 8 ]; then
         log_warn "VNC password > 8 chars, truncating to: ${VNC_PASSWORD:0:8}"
         VNC_PASSWORD="${VNC_PASSWORD:0:8}"
     fi
-
-    # Wait for Xvfb to be fully ready
+restart
+    # Wait a bit for X server (Xorg 或 Xvfb) to be fully ready
     sleep 2
 
-    # Start x11vnc with plaintext password (more reliable than password file)
-    log_info "Starting x11vnc on port 5900..."
-    x11vnc -display :99 -forever -shared -passwd "$VNC_PASSWORD" -rfbport 5900 -noxdamage -bg 2>&1 | grep -v "^$"
+    # Start x11vnc 指向当前 DISPLAY（:0 或 :99）
+    log_info "Starting x11vnc on display ${DISPLAY} (port 5900)..."
+    x11vnc -display "${DISPLAY}" -forever -shared -passwd "$VNC_PASSWORD" -rfbport 5900 -noxdamage -bg 2>&1 | grep -v "^$"
 
     # Wait for x11vnc to start
     sleep 2
@@ -276,9 +372,7 @@ if [ "$ENABLE_VNC" = "true" ]; then
         log_info "✓ VNC server started successfully on port 5900"
         log_info "  Password: $VNC_PASSWORD"
         log_info "  Connect to: your-server-ip:5900"
-
         # Start VNC monitor to keep it alive
-        # 启动 VNC 监控，保持服务存活
         if [ -f "/home/steam/scripts/vnc-monitor.sh" ]; then
             log_info "Starting VNC health monitor..."
             /home/steam/scripts/vnc-monitor.sh &
