@@ -21,6 +21,15 @@ services:
     
     # Enable privileged mode for full hardware access
     # 开启特权模式以获取硬件完全访问权限
+    #
+    # WARNING: Privileged mode grants full access to host devices and bypasses
+    # Docker security features. Only enable if you need GPU support or other
+    # hardware access. For standard deployments without GPU, you can disable
+    # this by commenting out or setting to false.
+    #
+    # 警告：特权模式授予对主机设备的完全访问权限并绕过 Docker 安全功能。
+    # 仅在需要 GPU 支持或其他硬件访问时启用。对于不使用 GPU 的标准部署，
+    # 可以通过注释或设置为 false 来禁用。
     privileged: true
     
     # Interactive mode for Steam Guard
