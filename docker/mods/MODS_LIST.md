@@ -27,7 +27,7 @@ This document lists all the mods included in the Puppy Stardew Server Docker ima
   - config.json (45 bytes)
   - manifest.json (354 bytes)
 - **Features**:
-  - **Automatic save loading** - No manual VNC loading required!
+  - **Automatic save loading** - No manual web interface loading required!
   - Automatic save file detection and sorting by date
   - Auto-loads most recent save or configured save
   - Save monitoring and logging
@@ -79,13 +79,13 @@ These mods are pre-installed in the Docker image and will be automatically loade
 
 1. Start the container
 2. **For existing saves**: Server Auto Load will automatically detect and load the most recent save
-3. **For new saves**: Connect via VNC (port 5900) to create a new farm
+3. **For new saves**: Connect via web interface (http://server-ip:8080) to create a new farm
 4. Once loaded, the game runs continuously
 
 ### After Container Restart
 
 - **Automatic!** Server Auto Load will automatically load the most recent save
-- No manual VNC loading required
+- No manual web interface loading required
 - The game continues running 24/7 via Always On Server
 
 ### Manual Configuration (Optional)

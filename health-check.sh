@@ -172,12 +172,12 @@ check_ports() {
         return 1
     fi
 
-    # Check VNC port (5900/tcp) - optional
-    if docker port $CONTAINER_NAME 5900/tcp &> /dev/null; then
-        vnc_port=$(docker port $CONTAINER_NAME 5900/tcp)
-        print_success "VNC port is mapped: $vnc_port"
+    # Check web interface port (8080/tcp) - optional
+    if docker port $CONTAINER_NAME 8080/tcp &> /dev/null; then
+        web_port=$(docker port $CONTAINER_NAME 8080/tcp)
+        print_success "Web interface port is mapped: $web_port"
     else
-        print_info "VNC port not mapped (disabled or not configured)"
+        print_info "Web interface port not mapped (disabled or not configured)"
     fi
 }
 

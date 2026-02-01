@@ -300,9 +300,9 @@ print_next_steps() {
     echo -e "   - 然后按 ${YELLOW}Ctrl+P Ctrl+Q${NC} 分离（${RED}不要按 Ctrl+C！${NC}）"
     echo ""
 
-    echo -e "${BOLD}3. 通过 VNC 初始设置（仅首次）：${NC}"
-    echo "   - 下载 VNC 客户端（RealVNC、TightVNC 等）"
-    echo -e "   - 连接到: ${CYAN}$(get_server_ip):5900${NC}"
+    echo -e "${BOLD}3. 通过 web 界面初始设置（仅首次）：${NC}"
+    echo "   - 打开您的浏览器"
+    echo -e "   - 访问: ${CYAN}http://$(get_server_ip):8080${NC}"
     echo -e "   - 密码: ${CYAN}$(grep VNC_PASSWORD .env 2>/dev/null | cut -d'=' -f2 || echo 'stardew123')${NC}"
     echo "   - 在游戏中创建或加载存档文件"
     echo "   - 存档将在未来重启时自动加载！"

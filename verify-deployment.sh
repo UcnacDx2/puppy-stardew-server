@@ -110,13 +110,13 @@ else
 fi
 echo ""
 
-echo -e "${CYAN}[9/10] VNC Server${NC}"
-if echo "$LOG" | grep -q "VNC server started"; then
-    check_pass "VNC server running on port 5900"
-elif echo "$LOG" | grep -q "VNC disabled"; then
-    check_warn "VNC is disabled (ENABLE_VNC=false)"
+echo -e "${CYAN}[9/10] Web Interface (Selkies)${NC}"
+if echo "$LOG" | grep -q "Selkies.*started"; then
+    check_pass "Selkies web interface running on port 8080"
+elif echo "$LOG" | grep -q "VNC disabled\|Web remote access disabled"; then
+    check_warn "Web remote access is disabled (ENABLE_VNC=false)"
 else
-    check_warn "VNC status unclear"
+    check_warn "Web interface status unclear"
 fi
 echo ""
 
@@ -152,10 +152,10 @@ else
     check_warn "Port 24642 not detected (netstat may not be available)"
 fi
 
-if netstat -tuln 2>/dev/null | grep -q ":5900"; then
-    check_pass "VNC port 5900/tcp is listening"
+if netstat -tuln 2>/dev/null | grep -q ":8080"; then
+    check_pass "Web interface port 8080/tcp is listening"
 else
-    check_warn "Port 5900 not detected (VNC may be disabled)"
+    check_warn "Port 8080 not detected (web interface may be disabled)"
 fi
 echo ""
 
@@ -173,7 +173,7 @@ if [ $FAIL -eq 0 ]; then
     echo -e "${GREEN}✓ 部署看起来正常！${NC}"
     echo ""
     echo -e "Next steps:"
-    echo -e "  1. Connect via VNC: localhost:5900 or server-ip:5900"
+    echo -e "  1. Connect via web browser: http://localhost:8080 or http://server-ip:8080"
     echo -e "  2. Click CO-OP → Start new co-op farm"
     echo -e "  3. Players can connect via invite code"
     exit 0

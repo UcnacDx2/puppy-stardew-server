@@ -314,9 +314,9 @@ show_next_steps() {
     echo -e "   - Then press ${YELLOW}Ctrl+P Ctrl+Q${NC} to detach (${RED}NOT Ctrl+C!${NC})"
     echo ""
 
-    echo -e "${BOLD}3. Initial setup via VNC (first time only):${NC}"
-    echo "   - Download a VNC client (RealVNC, TightVNC, etc.)"
-    echo -e "   - Connect to: ${CYAN}$(get_server_ip):5900${NC}"
+    echo -e "${BOLD}3. Initial setup via web interface (first time only):${NC}"
+    echo "   - Open your web browser"
+    echo -e "   - Navigate to: ${CYAN}http://$(get_server_ip):8080${NC}"
     echo -e "   - Password: ${CYAN}$(grep VNC_PASSWORD .env | cut -d'=' -f2)${NC}"
     echo "   - Create or load a save file in the game"
     echo "   - The save will auto-load on future restarts!"

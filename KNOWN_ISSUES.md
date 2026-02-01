@@ -11,9 +11,9 @@ This document lists known limitations and issues with workarounds.
 
 **Issue / 问题:**
 
-When the container restarts, the save file is automatically loaded but the multiplayer server component is not fully initialized. Players cannot connect until the save is manually reloaded through VNC.
+When the container restarts, the save file is automatically loaded but the multiplayer server component is not fully initialized. Players cannot connect until the save is manually reloaded through the web interface.
 
-容器重启后，存档文件会自动加载，但联机服务器组件未完全初始化。玩家无法连接，需要通过 VNC 手动重新加载存档。
+容器重启后，存档文件会自动加载，但联机服务器组件未完全初始化。玩家无法连接，需要通过 web 界面手动重新加载存档。
 
 **Why This Happens / 原因:**
 
@@ -27,8 +27,8 @@ After container restart, follow these steps to restore multiplayer functionality
 
 容器重启后，按以下步骤恢复联机功能：
 
-1. Connect to the server via VNC (port 5900)
-   通过 VNC 连接到服务器（端口 5900）
+1. Connect to the server via web interface (http://your-server-ip:8080)
+   通过 web 界面连接到服务器（http://服务器IP:8080）
 
 2. Press ESC to return to the title screen
    按 ESC 返回标题界面
@@ -94,13 +94,13 @@ No action needed. These warnings can be safely ignored.
 
 ---
 
-## VNC Connection Required for First Setup
-## 首次设置需要 VNC 连接
+## Web Interface Connection Required for First Setup
+## 首次设置需要 Web 界面连接
 
 **Issue / 问题:**
 
-The first time you start the server, you must use VNC to create or load a save file.
-首次启动服务器时，必须使用 VNC 创建或加载存档文件。
+The first time you start the server, you must use the web interface to create or load a save file.
+首次启动服务器时，必须使用 web 界面创建或加载存档文件。
 
 **Why This Happens / 原因:**
 
@@ -117,14 +117,14 @@ One-time setup only. After the initial save is created, it will auto-load on sub
 Follow the setup instructions in the README:
 按照 README 中的设置说明：
 
-1. Connect via VNC (port 5900, password from .env file)
-   通过 VNC 连接（端口 5900，密码来自 .env 文件）
+1. Connect via web interface (http://your-server-ip:8080, password from .env file)
+   通过 web 界面连接（http://服务器IP:8080，密码来自 .env 文件）
 
 2. Click "CO-OP" → "Start new co-op farm" or "Load" existing save
    点击 "CO-OP" → "开始新的联机农场" 或 "加载" 现有存档
 
-3. After setup, you can disable VNC if desired to save ~50MB RAM
-   设置完成后，如需节省约 50MB 内存，可禁用 VNC
+3. After setup, you can disable web remote access if desired to save resources
+   设置完成后，如需节省资源，可禁用 web 远程访问
 
 ---
 
