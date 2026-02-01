@@ -30,7 +30,7 @@ The workflow runs on the following events:
 Before the workflow can push images to Docker Hub, you need to configure the following repository secrets:
 
 1. **`DOCKER_USERNAME`**: Your Docker Hub username (e.g., `truemanlive`)
-2. **`DOCKER_PASSWORD`**: Your Docker Hub access token or password
+2. **`DOCKERHUB_TOKEN`**: Your Docker Hub Personal Access Token (PAT)
 
 #### How to Configure Secrets
 
@@ -39,9 +39,19 @@ Before the workflow can push images to Docker Hub, you need to configure the fol
 3. Click **New repository secret**
 4. Add both secrets:
    - Name: `DOCKER_USERNAME`, Value: Your Docker Hub username
-   - Name: `DOCKER_PASSWORD`, Value: Your Docker Hub access token
+   - Name: `DOCKERHUB_TOKEN`, Value: Your Docker Hub Personal Access Token (created from step below)
 
-**Note**: It's recommended to use a Docker Hub access token instead of your password. You can create one at https://hub.docker.com/settings/security
+**Important**: You MUST use a Docker Hub Personal Access Token (PAT), not your Docker Hub password. Docker Hub has deprecated password authentication for security reasons.
+
+**How to create a Personal Access Token**:
+1. Log in to Docker Hub: https://hub.docker.com
+2. Go to Account Settings → Security: https://hub.docker.com/settings/security
+3. Click "New Access Token"
+4. Give it a description (e.g., "GitHub Actions - puppy-stardew-server")
+5. Set permissions to "Read & Write" (required for pushing images)
+6. Click "Generate"
+7. **Copy the token immediately** - you won't be able to see it again!
+8. Use this token as the value for the `DOCKERHUB_TOKEN` secret in GitHub
 
 ### Usage Examples
 
@@ -81,8 +91,13 @@ After a successful build, you can find:
 ### Troubleshooting
 
 #### Build Fails with "unauthorized" error
-- Check that `DOCKER_USERNAME` and `DOCKER_PASSWORD` secrets are correctly set
-- Verify that the Docker Hub access token has write permissions
+- **Most common cause**: Using Docker Hub password instead of Personal Access Token
+  - Docker Hub requires PAT for authentication, passwords are no longer supported
+  - Create a new PAT at https://hub.docker.com/settings/security
+  - Update the `DOCKERHUB_TOKEN` secret with your new PAT
+- Check that `DOCKER_USERNAME` and `DOCKERHUB_TOKEN` secrets are correctly set in GitHub repository settings
+- Verify that the Docker Hub Personal Access Token has "Read & Write" permissions
+- Ensure your Docker Hub username is spelled exactly as it appears on Docker Hub (case-sensitive)
 
 #### Build Fails with "context" or "Dockerfile not found" error
 - Ensure the Dockerfile exists at `docker/Dockerfile`
