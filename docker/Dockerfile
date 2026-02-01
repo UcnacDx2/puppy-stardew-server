@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 LABEL maintainer="truemanlive" \
       description="Stardew Valley dedicated server with auto-pause and instant sleep" \
-      version="1.0.61"
+      version="1.0.62"
 # RUN sed -i.bak -E 's#https?://(archive|security)\.ubuntu\.com/ubuntu/#http://mirrors.aliyun.com/ubuntu/#g' /etc/apt/sources.list
 
 # Get build platform information
