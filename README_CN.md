@@ -664,6 +664,16 @@ docker compose up -d
 2. 创建功能分支
 3. 提交 Pull Request
 
+### 仓库维护者：设置 Docker Hub 集成
+
+如果您是维护者并需要为 GitHub Actions 设置 Docker Hub 集成：
+
+1. **阅读设置指南**：查看 [.github/workflows/SETUP_DOCKER_SECRETS.md](.github/workflows/SETUP_DOCKER_SECRETS.md) 获取详细说明
+2. **测试您的凭证**：运行 `./test-docker-credentials.sh` 在配置 GitHub secrets 之前验证您的 Docker Hub 凭证
+3. **配置 secrets**：将 `DOCKER_USERNAME` 和 `DOCKER_PASSWORD`（个人访问令牌）添加为 GitHub 仓库 secrets
+
+更多详情，请参阅 [workflows 文档](.github/workflows/README.md)。
+
 ## 支持与社区
 
 - **错误报告**：[GitHub Issues](https://github.com/truman-world/puppy-stardew-server/issues)
