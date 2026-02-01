@@ -34,6 +34,7 @@ services:
       # Web remote access settings - OPTIONAL (for first-time setup)
       # Web 远程访问设置 - 可选（用于首次设置）
       - ENABLE_VNC=${ENABLE_VNC:-true}
+      - VNC_USERNAME=${VNC_USERNAME:-user}
       - VNC_PASSWORD=${VNC_PASSWORD:-stardew123}
 
       # Log monitoring - OPTIONAL (default: enabled)
