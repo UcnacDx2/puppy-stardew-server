@@ -231,6 +231,7 @@ services:
       - STEAM_USERNAME=${STEAM_USERNAME}
       - STEAM_PASSWORD=${STEAM_PASSWORD}
       - ENABLE_VNC=${ENABLE_VNC:-true}
+      - VNC_USERNAME=${VNC_USERNAME:-user}
       - VNC_PASSWORD=${VNC_PASSWORD:-stardew123}
     ports:
       - "24642:24642/udp"
@@ -256,6 +257,7 @@ STEAM_PASSWORD=your_steam_password
 
 # Web 远程访问配置（可选）
 ENABLE_VNC=true
+VNC_USERNAME=user
 VNC_PASSWORD=stardew123
 EOF
 ```
@@ -307,7 +309,8 @@ docker attach puppy-stardew
 
 1. **在浏览器中打开 web 界面：**
    - 地址：`http://服务器IP:8080`
-   - 密码：您在 `.env` 文件中设置的 `VNC_PASSWORD`（如有提示）
+   - 用户名：您在 `.env` 文件中设置的 `VNC_USERNAME`（默认：user）
+   - 密码：您在 `.env` 文件中设置的 `VNC_PASSWORD`
    - 无需安装客户端 - 直接在浏览器中操作！
 
 2. **在 web 界面中：**
