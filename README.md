@@ -604,6 +604,16 @@ Contributions are welcome! Please:
 2. Create a feature branch
 3. Submit a pull request
 
+### For Repository Maintainers: Setting Up Docker Hub Integration
+
+If you're a maintainer and need to set up Docker Hub integration for GitHub Actions:
+
+1. **Read the setup guide**: See [.github/workflows/SETUP_DOCKER_SECRETS.md](.github/workflows/SETUP_DOCKER_SECRETS.md) for detailed instructions
+2. **Test your credentials**: Run `./test-docker-credentials.sh` to verify your Docker Hub credentials before configuring GitHub secrets
+3. **Configure secrets**: Add `DOCKER_USERNAME` and `DOCKER_PASSWORD` (Personal Access Token) as GitHub repository secrets
+
+For more details, see the [workflows documentation](.github/workflows/README.md).
+
 ## Support & Community
 
 - **Bug Reports**: [GitHub Issues](https://github.com/truman-world/puppy-stardew-server/issues)

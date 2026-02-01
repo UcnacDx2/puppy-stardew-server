@@ -93,6 +93,13 @@ After a successful build, you can find:
 ### Troubleshooting
 
 #### Build Fails with "unauthorized" error
+
+**Quick Fix**: See the detailed setup guide at [SETUP_DOCKER_SECRETS.md](SETUP_DOCKER_SECRETS.md) or run the validation script:
+```bash
+./test-docker-credentials.sh
+```
+
+Common causes:
 - **Most common cause**: Your `DOCKER_USERNAME` in GitHub secrets doesn't match your actual Docker Hub username
   - Make sure `DOCKER_USERNAME` is spelled exactly as it appears on Docker Hub (case-sensitive)
   - The workflow pushes images to `<DOCKER_USERNAME>/puppy-stardew-server`
