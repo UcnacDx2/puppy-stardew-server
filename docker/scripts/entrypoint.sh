@@ -357,6 +357,9 @@ if [ "$ENABLE_VNC" = "true" ]; then
 
     # Start Selkies web server in background
     log_info "Starting Selkies web interface on port 8080..."
+    log_warn "SECURITY: Selkies binds to 0.0.0.0, exposing port 8080 on all network interfaces"
+    log_warn "SECURITY: Ensure port 8080 is protected by firewall rules or network security groups"
+    log_warn "SECURITY: Only expose this port to trusted networks or users"
     
     # Set Selkies environment variables
     export SELKIES_ENCODER=${SELKIES_ENCODER:-x264enc}

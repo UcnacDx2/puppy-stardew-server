@@ -110,18 +110,6 @@ graph TB
     style SMAPI fill:#87CEEB
     style SLG fill:#FFA500
 ```
-    SAL --> Game
-    SLG --> Game
-
-    Game -.-> Saves
-    Game -.-> Config
-    Steam -.-> SteamData
-
-    style AHH fill:#90EE90
-    style Game fill:#FFD700
-    style SMAPI fill:#87CEEB
-    style SLG fill:#FFA500
-```
 
 ## 3分钟搭建星露谷物语服务器
 
