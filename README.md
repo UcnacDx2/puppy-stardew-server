@@ -247,8 +247,7 @@ After the server starts, you need to create or load a save file **once**:
 
 1. **Open the web interface in your browser:**
    - Address: `http://your-server-ip:8080`
-   - Username: `admin`
-   - Password: The `VNC_PASSWORD` from your `.env` file
+   - Password: The `VNC_PASSWORD` from your `.env` file (if prompted)
    - No client installation needed - works directly in your browser!
 
 2. **In the web interface:**

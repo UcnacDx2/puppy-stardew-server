@@ -30,28 +30,40 @@ RUN dpkg --add-architecture i386 && \
     tmux \
     net-tools \
     procps \
+    jq \
+    tar \
+    gzip \
+    libpulse0 \
+    wayland-protocols \
+    libwayland-dev \
+    libwayland-egl1 \
+    x11-utils \
+    x11-xkb-utils \
+    x11-xserver-utils \
+    xserver-xorg-core \
+    libx11-xcb1 \
+    libxcb-dri3-0 \
+    libxkbcommon0 \
+    libxdamage1 \
+    libxfixes3 \
+    libxv1 \
+    libxtst6 \
+    libxext6 \
     libgl1-mesa-dri libgl1-mesa-glx mesa-utils libegl1-mesa \
-    xserver-xorg-core xserver-xorg-video-modesetting x11-xserver-utils x11-apps xserver-xorg-video-dummy \
+    xserver-xorg-video-modesetting \
+    xserver-xorg-video-dummy \
     xvfb \
     openbox \
     expect \
     xdotool \
     dotnet-runtime-6.0 \
-    python3 \
-    python3-pip \
-    python3-dev \
-    build-essential \
-    gstreamer1.0-plugins-base \
-    gstreamer1.0-plugins-good \
-    gstreamer1.0-plugins-bad \
-    gstreamer1.0-plugins-ugly \
-    gstreamer1.0-libav \
-    gstreamer1.0-tools \
-    gstreamer1.0-x \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Selkies-GStreamer as root
-RUN pip3 install --no-cache-dir selkies-gstreamer
+# Download and install Selkies-GStreamer portable distribution
+RUN export SELKIES_VERSION="$(curl -fsSL "https://api.github.com/repos/selkies-project/selkies/releases/latest" | jq -r '.tag_name' | sed 's/[^0-9\.\-]*//g')" && \
+    cd /opt && \
+    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v${SELKIES_VERSION}/selkies-gstreamer-portable-v${SELKIES_VERSION}_amd64.tar.gz" | tar -xzf - && \
+    chmod +x /opt/selkies-gstreamer/selkies-gstreamer-run
 
 # Create non-root user for security
 # 创建非 root 用户以提高安全性

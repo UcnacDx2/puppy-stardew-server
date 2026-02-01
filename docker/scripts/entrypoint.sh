@@ -362,15 +362,12 @@ if [ "$ENABLE_VNC" = "true" ]; then
     export SELKIES_ENCODER=${SELKIES_ENCODER:-x264enc}
     export SELKIES_ENABLE_RESIZE=${SELKIES_ENABLE_RESIZE:-true}
     export SELKIES_FRAMERATE=${SELKIES_FRAMERATE:-30}
+    export SELKIES_BASIC_AUTH_PASSWORD="$VNC_PASSWORD"
     
-    # Start Selkies-GStreamer with authentication
-    python3 -m selkies_gstreamer.gstwebrtc_app \
-        --addr 0.0.0.0 \
-        --port 8080 \
-        --enable_https false \
-        --enable_basic_auth true \
-        --basic_auth_user admin \
-        --basic_auth_password "$VNC_PASSWORD" \
+    # Start Selkies-GStreamer using the portable distribution
+    /opt/selkies-gstreamer/selkies-gstreamer-run \
+        --addr=0.0.0.0 \
+        --port=8080 \
         &
     
     SELKIES_PID=$!
@@ -383,7 +380,6 @@ if [ "$ENABLE_VNC" = "true" ]; then
         log_info "✓ Selkies web interface started successfully on port 8080"
         log_info "  Password: $VNC_PASSWORD"
         log_info "  Connect to: http://your-server-ip:8080"
-        log_info "  Username: admin"
     else
         log_error "✗ Selkies failed to start"
         log_error "Check logs above for errors"
@@ -440,8 +436,8 @@ log_info "To create/load a save:"
 log_info "要创建/加载存档："
 log_info "  1. Open web browser and go to: http://your-server-ip:8080"
 log_info "  1. 打开浏览器访问：http://your-server-ip:8080"
-log_info "  2. Login with username 'admin' and your password"
-log_info "  2. 使用用户名 'admin' 和您的密码登录"
+log_info "  2. Enter password if prompted"
+log_info "  2. 如有提示，输入您的密码"
 log_info "  3. Click CO-OP → Start new co-op farm"
 log_info "  3. 点击 CO-OP → 开始新的联机农场"
 log_info ""

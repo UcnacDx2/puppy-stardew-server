@@ -319,8 +319,7 @@ docker attach puppy-stardew
 
 1. **在浏览器中打开 web 界面：**
    - 地址：`http://服务器IP:8080`
-   - 用户名：`admin`
-   - 密码：您在 `.env` 文件中设置的 `VNC_PASSWORD`
+   - 密码：您在 `.env` 文件中设置的 `VNC_PASSWORD`（如有提示）
    - 无需安装客户端 - 直接在浏览器中操作！
 
 2. **在 web 界面中：**
