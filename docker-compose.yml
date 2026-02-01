@@ -18,6 +18,11 @@ services:
     image: truemanlive/puppy-stardew-server:v1.0.61
     container_name: puppy-stardew
     restart: unless-stopped  # Keep running after Steam Guard
+    
+    # Enable privileged mode for full hardware access
+    # 开启特权模式以获取硬件完全访问权限
+    privileged: true
+    
     # Interactive mode for Steam Guard
     # Steam Guard 交互模式
     stdin_open: true
@@ -40,6 +45,10 @@ services:
       # 日志监控 - 可选（默认：启用）
       - ENABLE_LOG_MONITOR=${ENABLE_LOG_MONITOR:-true}
 
+      # GPU support - OPTIONAL (default: disabled)
+      # GPU 支持 - 可选（默认：禁用）
+      - USE_GPU=${USE_GPU:-false}
+
     # Port mappings
     # 端口映射
     ports:
@@ -50,6 +59,11 @@ services:
       # Selkies web interface port (OPTIONAL - only needed for initial setup)
       # Selkies web 界面端口（可选 - 仅首次设置需要）
       - "8080:8080/tcp"
+
+    # GPU device mapping (OPTIONAL - uncomment to enable GPU support)
+    # GPU 设备映射（可选 - 取消注释以启用 GPU 支持）
+    # devices:
+    #   - /dev/dri:/dev/dri
 
     # Persistent data volumes (bind mounts)
     # 持久化数据卷（绑定挂载）
@@ -77,10 +91,13 @@ services:
     # - 2GB 内存服务器：设置内存为 1.5G
     # - 4GB 内存服务器：保持 2G
     # - 8GB+ 内存服务器：8+ 玩家时可增加到 4G
+    #
+    # If using GPU, consider reserving more memory
+    # 如果使用了显卡，建议保留足够的内存
     deploy:
       resources:
         limits:
-          cpus: '1.5'
+          cpus: '2.0'
           memory: 2G
         reservations:
           memory: 1G
