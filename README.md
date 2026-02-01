@@ -201,6 +201,7 @@ nano .env  # or use your favorite editor
 STEAM_USERNAME=your_steam_username
 STEAM_PASSWORD=your_steam_password
 ENABLE_VNC=true
+VNC_USERNAME=user
 VNC_PASSWORD=stardew123
 ```
 
@@ -247,7 +248,8 @@ After the server starts, you need to create or load a save file **once**:
 
 1. **Open the web interface in your browser:**
    - Address: `http://your-server-ip:8080`
-   - Password: The `VNC_PASSWORD` from your `.env` file (if prompted)
+   - Username: The `VNC_USERNAME` from your `.env` file (default: `user`)
+   - Password: The `VNC_PASSWORD` from your `.env` file
    - No client installation needed - works directly in your browser!
 
 2. **In the web interface:**
