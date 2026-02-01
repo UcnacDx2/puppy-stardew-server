@@ -60,9 +60,8 @@ RUN dpkg --add-architecture i386 && \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Selkies-GStreamer portable distribution
-RUN export SELKIES_VERSION="$(curl -fsSL "https://api.github.com/repos/selkies-project/selkies/releases/latest" | jq -r '.tag_name' | sed 's/[^0-9\.\-]*//g')" && \
-    cd /opt && \
-    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v${SELKIES_VERSION}/selkies-gstreamer-portable-v${SELKIES_VERSION}_amd64.tar.gz" | tar -xzf - && \
+RUN cd /opt && \
+    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v1.6.2/selkies-gstreamer-portable-v1.6.2_amd64.tar.gz" | tar -xzf - && \
     chmod +x /opt/selkies-gstreamer/selkies-gstreamer-run
 
 # Create non-root user for security
