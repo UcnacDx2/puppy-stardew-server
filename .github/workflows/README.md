@@ -12,7 +12,7 @@ Automatically builds and pushes Docker images to Docker Hub when code changes ar
 ### Triggers
 The workflow runs on the following events:
 - **Push to `main` branch**: Builds and pushes image with `latest` tag and branch name tag
-- **Push of version tags** (e.g., `v1.0.62`, `v1.1.0`): Builds and pushes image with semantic version tags
+- **Pushes of version tags** (e.g., `v1.0.62`, `v1.1.0`): Builds and pushes image with semantic version tags
 - **Pull Requests**: Builds the image to test (but does NOT push to Docker Hub)
 - **Manual trigger**: Can be triggered manually via GitHub Actions UI
 

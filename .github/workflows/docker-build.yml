@@ -70,4 +70,4 @@ jobs:
             VERSION=${{ steps.meta.outputs.version }}
 
       - name: Image digest
-        run: echo "Image digest:${{ steps.meta.outputs.digest }}"
+        run: echo "Image digest: ${{ steps.meta.outputs.digest }}"
