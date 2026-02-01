@@ -39,7 +39,7 @@ graph TB
 
     subgraph "Network Layer"
         FW[Firewall<br/>Port 24642/UDP]
-        VNC[VNC Access<br/>Port 5900/TCP]
+        WEB[Web Remote Access<br/>Port 8080/TCP]
     end
 
     subgraph "Docker Container"
@@ -68,7 +68,7 @@ graph TB
     Console --> FW
     FW --> Game
 
-    VNC -.-> Entry
+    WEB -.-> Entry
     Entry --> Steam
     Steam --> SMAPI
     SMAPI --> AHH
@@ -109,7 +109,7 @@ Setting up a **Stardew Valley dedicated server** has never been easier! With **o
 - **Docker Compose** - Easy deployment and management
 - **Resource Efficient** - Runs smoothly on servers with only 2GB RAM
 - **Auto-Save Loading** - Automatically loads your save on server restart
-- **VNC Remote Access** 🖥️ - Built-in VNC for easy first-time setup
+- **Web Remote Access** 🖥️ - Built-in Selkies web interface for easy browser-based setup
 - **Instant Sleep** - Bonus feature: Players can sleep at any time without waiting
 - **Hidden Host** - Host player is automatically hidden for seamless gameplay
 - **Skill Protection** 🛡️ - NEW: Prevents level anomalies, maintains natural progression
@@ -134,7 +134,7 @@ Setting up a **Stardew Valley dedicated server** has never been easier! With **o
 
 **Core Improvements:**
 - Fully automated Always On Server enablement workflow
-- No manual F9 or VNC intervention required
+- No manual F9 or web interface intervention required
 - Game automatically pauses after container restart, awaiting player connections
 
 ## Quick Start
@@ -245,12 +245,13 @@ docker attach puppy-stardew
 
 After the server starts, you need to create or load a save file **once**:
 
-1. **Connect to VNC:**
-   - Address: `your-server-ip:5900`
+1. **Open the web interface in your browser:**
+   - Address: `http://your-server-ip:8080`
+   - Username: `admin`
    - Password: The `VNC_PASSWORD` from your `.env` file
-   - VNC Client: [RealVNC](https://www.realvnc.com/en/connect/download/viewer/), [TightVNC](https://www.tightvnc.com/), or any VNC viewer
+   - No client installation needed - works directly in your browser!
 
-2. **In the VNC window:**
+2. **In the web interface:**
    - Create a new farm, or
    - Load an existing save
 
@@ -258,7 +259,7 @@ After the server starts, you need to create or load a save file **once**:
    - The ServerAutoLoad mod will remember your save
    - Future restarts will auto-load this save
    - Always On Server will automatically enable Auto Mode
-   - You can disconnect from VNC
+   - You can close the browser tab
 
 4. **Players can now connect!**
    - Open Stardew Valley
@@ -278,7 +279,7 @@ After the server starts, you need to create or load a save file **once**:
 |-----|---------|---------|--------------|
 | **Always On Server** | v1.20.3 | Keeps server running 24/7 without host player | Headless server operation |
 | **AutoHideHost** | v1.2.2 | Custom mod - Hides host player and enables instant sleep | Seamless day-night transitions |
-| **ServerAutoLoad** | v1.2.1 | Custom mod - Automatically loads your save on startup | No manual VNC loading needed |
+| **ServerAutoLoad** | v1.2.1 | Custom mod - Automatically loads your save on startup | No manual web interface loading needed |
 | **✨ Skill Level Guard** | v1.4.0 | **NEW** - Prevents forced Level 10 bug & enables auto-activation | XP-based level calculation + Auto Mode activation |
 
 **What's New in v1.0.58:**
@@ -472,7 +473,7 @@ docker attach puppy-stardew
    docker ps | grep puppy-stardew
    ```
 
-3. **Check if save is loaded**: Connect via VNC or check logs for "Save loaded"
+3. **Check if save is loaded**: Connect via web interface or check logs for "Save loaded"
 
 4. **Ensure game versions match**: Server and clients must have same Stardew Valley version
 </details>
@@ -536,7 +537,7 @@ Edit `docker-compose.yml`:
 ```yaml
 ports:
   - "24642:24642/udp"  # Change first number to your desired port
-  - "5900:5900/tcp"    # VNC port
+  - "8080:8080/tcp"    # Web interface port
 ```
 
 Restart after changes:
@@ -546,7 +547,7 @@ docker compose up -d
 </details>
 
 <details>
-<summary><b>Disable VNC After Setup</b></summary>
+<summary><b>Disable Web Remote Access After Setup</b></summary>
 
 Edit `.env`:
 ```env
@@ -558,7 +559,7 @@ Restart:
 docker compose up -d
 ```
 
-This saves ~50MB RAM.
+This saves resources by disabling the web interface.
 </details>
 
 ## System Requirements
@@ -568,7 +569,7 @@ This saves ~50MB RAM.
 - **RAM**: 2GB minimum (4GB recommended for 4+ players)
 - **Disk**: 2GB free space
 - **OS**: Linux, Windows (Docker Desktop), macOS (Docker Desktop)
-- **Network**: Open port 24642/UDP (and 5900/TCP for VNC)
+- **Network**: Open port 24642/UDP (and 8080/TCP for web interface)
 
 **Clients:**
 - Stardew Valley (any platform: PC, Mac, Linux, iOS, Android)

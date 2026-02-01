@@ -60,7 +60,7 @@ graph TB
 
     subgraph "网络层"
         FW[防火墙<br/>端口 24642/UDP]
-        VNC[VNC访问<br/>端口 5900/TCP]
+        WEB[Web 远程访问<br/>端口 8080/TCP]
     end
 
     subgraph "Docker容器"
@@ -89,7 +89,7 @@ graph TB
     Console --> FW
     FW --> Game
 
-    VNC -.-> Entry
+    WEB -.-> Entry
     Entry --> Steam
     Steam --> SMAPI
     SMAPI --> AHH
@@ -98,6 +98,18 @@ graph TB
     SMAPI --> SLG
     AHH --> Game
     AOS --> Game
+    SAL --> Game
+    SLG --> Game
+
+    Game -.-> Saves
+    Game -.-> Config
+    Steam -.-> SteamData
+
+    style AHH fill:#90EE90
+    style Game fill:#FFD700
+    style SMAPI fill:#87CEEB
+    style SLG fill:#FFA500
+```
     SAL --> Game
     SLG --> Game
 
@@ -130,7 +142,7 @@ graph TB
 - **Docker Compose** - 轻松部署和管理
 - **资源高效** - 2GB 内存服务器也能流畅运行
 - **自动加载存档** - 重启容器，存档自动加载
-- **VNC 远程访问** 🖥️ - 内置 VNC，首次设置超简单
+- **Web 远程访问** 🖥️ - 内置 Selkies web 界面，浏览器直接访问
 - **即时睡眠** - 附加功能：玩家随时可以睡觉，无需等待
 - **隐藏房主** - 房主玩家自动隐藏，零干扰
 - **技能等级保护** 🛡️ - 新功能：防止等级异常，保持自然成长
@@ -155,7 +167,7 @@ graph TB
 
 **核心改进：**
 - 完全自动化的Always On Server启用流程
-- 无需手动按F9或VNC操作
+- 无需手动按F9或web界面操作
 - 容器重启后游戏自动暂停，等待玩家连接
 
 ## 快速开始
@@ -234,7 +246,7 @@ services:
       - VNC_PASSWORD=${VNC_PASSWORD:-stardew123}
     ports:
       - "24642:24642/udp"
-      - "5900:5900/tcp"
+      - "8080:8080/tcp"
     volumes:
       - ./data/saves:/home/steam/.config/StardewValley:rw
       - ./data/game:/home/steam/stardewvalley:rw
@@ -254,7 +266,7 @@ cat > .env << 'EOF'
 STEAM_USERNAME=your_steam_username
 STEAM_PASSWORD=your_steam_password
 
-# VNC 配置（可选）
+# Web 远程访问配置（可选）
 ENABLE_VNC=true
 VNC_PASSWORD=stardew123
 EOF
@@ -305,12 +317,13 @@ docker attach puppy-stardew
 
 服务器启动后，您需要**一次性**创建或加载存档：
 
-1. **连接到 VNC：**
-   - 地址：`服务器IP:5900`
+1. **在浏览器中打开 web 界面：**
+   - 地址：`http://服务器IP:8080`
+   - 用户名：`admin`
    - 密码：您在 `.env` 文件中设置的 `VNC_PASSWORD`
-   - VNC 客户端：[RealVNC](https://www.realvnc.com/en/connect/download/viewer/)、[TightVNC](https://www.tightvnc.com/) 或任何 VNC 查看器
+   - 无需安装客户端 - 直接在浏览器中操作！
 
-2. **在 VNC 窗口中：**
+2. **在 web 界面中：**
    - 创建新农场，或
    - 加载现有存档
 
@@ -318,7 +331,7 @@ docker attach puppy-stardew
    - ServerAutoLoad 模组会记住您的存档
    - 以后重启会自动加载此存档
    - Always On Server 会自动启用 Auto Mode
-   - 您可以断开 VNC 连接了
+   - 您可以关闭浏览器标签了
 
 4. **玩家现在可以连接了！**
    - 打开星露谷物语
@@ -338,7 +351,7 @@ docker attach puppy-stardew
 |-----|------|------|--------|
 | **Always On Server** | v1.20.3 | 保持服务器 24/7 运行，不需要房主在线 | 无人值守服务器运行 |
 | **AutoHideHost** | v1.2.2 | 自定义模组 - 隐藏房主玩家并启用即时睡眠 | 无缝昼夜过渡 |
-| **ServerAutoLoad** | v1.2.1 | 自定义模组 - 启动时自动加载存档 | 无需手动VNC加载 |
+| **ServerAutoLoad** | v1.2.1 | 自定义模组 - 启动时自动加载存档 | 无需手动web界面加载 |
 | **✨ Skill Level Guard** | v1.4.0 | **新版** - 防止Always On Server强制升到10级并实现自动启用 | 基于经验值精确计算等级 + Auto Mode自动启用 |
 
 **v1.0.58 新功能：**
@@ -532,7 +545,7 @@ docker attach puppy-stardew
    docker ps | grep puppy-stardew
    ```
 
-3. **检查存档是否已加载**：通过 VNC 连接或检查日志中的 "Save loaded"
+3. **检查存档是否已加载**：通过 web 界面连接或检查日志中的 "Save loaded"
 
 4. **确保游戏版本匹配**：服务器和客户端必须是相同的星露谷物语版本
 </details>
@@ -596,7 +609,7 @@ docker compose restart
 ```yaml
 ports:
   - "24642:24642/udp"  # 更改第一个数字为您想要的端口
-  - "5900:5900/tcp"    # VNC 端口
+  - "8080:8080/tcp"    # Web 界面端口
 ```
 
 更改后重启：
@@ -606,7 +619,7 @@ docker compose up -d
 </details>
 
 <details>
-<summary><b>设置完成后禁用 VNC</b></summary>
+<summary><b>设置完成后禁用 Web 远程访问</b></summary>
 
 编辑 `.env`：
 ```env
@@ -618,7 +631,7 @@ ENABLE_VNC=false
 docker compose up -d
 ```
 
-这可以节省约 50MB 内存。
+这可以节省资源。
 </details>
 
 ## 系统要求
@@ -628,7 +641,7 @@ docker compose up -d
 - **内存**：最低 2GB（4+ 玩家推荐 4GB）
 - **磁盘**：2GB 可用空间
 - **操作系统**：Linux、Windows（Docker Desktop）、macOS（Docker Desktop）
-- **网络**：开放端口 24642/UDP（VNC 需要 5900/TCP）
+- **网络**：开放端口 24642/UDP（web 界面需要 8080/TCP）
 
 **客户端：**
 - 星露谷物语（任何平台：PC、Mac、Linux、iOS、Android）
