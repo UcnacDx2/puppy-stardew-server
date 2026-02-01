@@ -347,43 +347,23 @@ if [ "$START_XVFB_FALLBACK" = "true" ]; then
 fi
 
 # Step 6: Start VNC server (optional)
-if [ "$ENABLE_VNC" = "true" ]; then
-    log_step "Step 7: Starting VNC server..."
-    echo "DISPLAY is set to: $DISPLAY"
-    VNC_PASSWORD=${VNC_PASSWORD:-"stardew1"}
+if [ "$ENABLE_WEB_VNC" = "true" ]; then
+    log_step "Step 7: Starting Selkies web interface..."
 
-    if [ ${#VNC_PASSWORD} -gt 8 ]; then
-        log_warn "VNC password > 8 chars, truncating to: ${VNC_PASSWORD:0:8}"
-        VNC_PASSWORD="${VNC_PASSWORD:0:8}"
-    fi
-restart
-    # Wait a bit for X server (Xorg 或 Xvfb) to be fully ready
-    sleep 2
+    export SELKIES_ENCODER=x264enc
+    export SELKIES_ENABLE_AUDIO=true
 
-    # Start x11vnc 指向当前 DISPLAY（:0 或 :99）
-    log_info "Starting x11vnc on display ${DISPLAY} (port 5900)..."
-    x11vnc -display "${DISPLAY}" -forever -shared -passwd "$VNC_PASSWORD" -rfbport 5900 -noxdamage -bg 2>&1 | grep -v "^$"
+    # 启动 Selkies
+    python3 -m selkies_gstreamer.gstwebrtc_app \
+        --addr 0.0.0.0 \
+        --port 8080 \
+        --enable_https false \
+        --password "$VNC_PASSWORD" \
+        &
 
-    # Wait for x11vnc to start
-    sleep 2
-
-    # Verify VNC is running
-    if pgrep -x "x11vnc" >/dev/null; then
-        log_info "✓ VNC server started successfully on port 5900"
-        log_info "  Password: $VNC_PASSWORD"
-        log_info "  Connect to: your-server-ip:5900"
-        # Start VNC monitor to keep it alive
-        if [ -f "/home/steam/scripts/vnc-monitor.sh" ]; then
-            log_info "Starting VNC health monitor..."
-            /home/steam/scripts/vnc-monitor.sh &
-            log_info "✓ VNC monitor started (30s check interval)"
-        fi
-    else
-        log_error "✗ VNC server failed to start"
-        log_error "Check logs above for errors"
-    fi
+    log_info "✓ Selkies started on http://your-server-ip:8080"
 else
-    log_step "Step 7: VNC disabled (set ENABLE_VNC=true to enable)"
+    log_step "Step 7: VNC disabled (set ENABLE_WEB_VNC=true to enable)"
 fi
 
 # Step 7: Setup optimized game config for VNC display
@@ -432,8 +412,8 @@ log_info "================================================"
 log_info ""
 log_info "To create/load a save:"
 log_info "要创建/加载存档："
-log_info "  1. Connect via VNC: localhost:5900 (password: $VNC_PASSWORD)"
-log_info "  1. 通过 VNC 连接：localhost:5900（密码：$VNC_PASSWORD）"
+log_info "  1. Connect via Web Interface: http://<your-server-ip>:8080"
+log_info "  1. 通过网页连接: http://<your-server-ip>:8080"
 log_info "  2. Click CO-OP → Start new co-op farm"
 log_info "  2. 点击 CO-OP → 开始新的联机农场"
 log_info ""

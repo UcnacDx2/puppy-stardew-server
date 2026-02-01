@@ -33,7 +33,7 @@ services:
 
       # VNC settings - OPTIONAL (for first-time setup)
       # VNC 设置 - 可选（用于首次设置）
-      - ENABLE_VNC=${ENABLE_VNC:-true}
+      - ENABLE_WEB_VNC=${ENABLE_WEB_VNC:-true}
       - VNC_PASSWORD=${VNC_PASSWORD:-stardew123}
 
       # Log monitoring - OPTIONAL (default: enabled)
@@ -49,7 +49,7 @@ services:
 
       # VNC port (OPTIONAL - only needed for initial setup)
       # VNC 端口（可选 - 仅首次设置需要）
-      - "5900:5900/tcp"
+      - "8080:8080/tcp"
 
     # Persistent data volumes (bind mounts)
     # 持久化数据卷（绑定挂载）

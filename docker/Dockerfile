@@ -33,9 +33,16 @@ RUN dpkg --add-architecture i386 && \
     libgl1-mesa-dri libgl1-mesa-glx mesa-utils libegl1-mesa \
     xserver-xorg-core xserver-xorg-video-modesetting x11-xserver-utils x11-apps xserver-xorg-video-dummy \
     xvfb \
-    x11vnc \
     openbox \
     expect \
+    python3 \
+    python3-pip \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    gstreamer1.0-tools \
     xdotool \
     dotnet-runtime-6.0 \
     && rm -rf /var/lib/apt/lists/*
@@ -91,7 +98,6 @@ COPY --chown=steam:steam scripts/log-monitor.sh /home/steam/scripts/log-monitor.
 COPY --chown=steam:steam scripts/view-logs.sh /home/steam/scripts/view-logs.sh
 COPY --chown=steam:steam scripts/auto-enable-server.sh /home/steam/scripts/auto-enable-server.sh
 COPY --chown=steam:steam scripts/auto-handle-readycheck.sh /home/steam/scripts/auto-handle-readycheck.sh
-COPY --chown=steam:steam scripts/vnc-monitor.sh /home/steam/scripts/vnc-monitor.sh
 COPY --chown=steam:steam scripts/set-resolution.sh /home/steam/scripts/set-resolution.sh
 RUN chmod +x /home/steam/entrypoint.sh /home/steam/scripts/*.sh
 
@@ -106,9 +112,12 @@ COPY --chown=steam:steam config/10-monitor.conf /etc/X11/xorg.conf.d/10-monitor.
 # 以 root 身份运行以允许启动时修复权限
 USER root
 
+# Install Selkies-GStreamer
+RUN pip3 install selkies-gstreamer
+
 # Expose game port (UDP) and VNC port (TCP)
 # 暴露游戏端口（UDP）和 VNC 端口（TCP）
-EXPOSE 24642/udp 5900/tcp
+EXPOSE 24642/udp 8080/tcp
 
 # Health check to ensure server is running
 # 健康检查确保服务器正在运行
