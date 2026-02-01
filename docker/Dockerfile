@@ -33,10 +33,29 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     tmux \
     net-tools \
     procps \
+    jq \
+    tar \
+    gzip \
+    libpulse0 \
+    wayland-protocols \
+    libwayland-dev \
+    libwayland-egl1 \
+    x11-utils \
+    x11-xkb-utils \
+    x11-xserver-utils \
+    xserver-xorg-core \
+    libx11-xcb1 \
+    libxcb-dri3-0 \
+    libxkbcommon0 \
+    libxdamage1 \
+    libxfixes3 \
+    libxv1 \
+    libxtst6 \
+    libxext6 \
     libgl1-mesa-dri libgl1-mesa-glx mesa-utils libegl1-mesa \
-    xserver-xorg-core xserver-xorg-video-modesetting x11-xserver-utils x11-apps xserver-xorg-video-dummy \
+    xserver-xorg-video-modesetting \
+    xserver-xorg-video-dummy \
     xvfb \
-    x11vnc \
     openbox \
     expect \
     xdotool \
@@ -45,6 +64,11 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
         apt-get install -y --no-install-recommends lib32gcc-s1 libcurl3-gnutls:i386; \
     fi && \
     rm -rf /var/lib/apt/lists/*
+
+# Download and install Selkies-GStreamer portable distribution
+RUN cd /opt && \
+    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v1.6.2/selkies-gstreamer-portable-v1.6.2_amd64.tar.gz" | tar -xzf - && \
+    chmod +x /opt/selkies-gstreamer/selkies-gstreamer-run
 
 # Create non-root user for security
 # 创建非 root 用户以提高安全性
@@ -97,12 +121,11 @@ COPY --chown=steam:steam scripts/log-monitor.sh /home/steam/scripts/log-monitor.
 COPY --chown=steam:steam scripts/view-logs.sh /home/steam/scripts/view-logs.sh
 COPY --chown=steam:steam scripts/auto-enable-server.sh /home/steam/scripts/auto-enable-server.sh
 COPY --chown=steam:steam scripts/auto-handle-readycheck.sh /home/steam/scripts/auto-handle-readycheck.sh
-COPY --chown=steam:steam scripts/vnc-monitor.sh /home/steam/scripts/vnc-monitor.sh
 COPY --chown=steam:steam scripts/set-resolution.sh /home/steam/scripts/set-resolution.sh
 RUN chmod +x /home/steam/entrypoint.sh /home/steam/scripts/*.sh
 
-# Copy optimized game config template for VNC display
-# 复制VNC显示优化的游戏配置模板
+# Copy optimized game config template for web remote access display
+# 复制 web 远程访问显示优化的游戏配置模板
 COPY --chown=steam:steam config/startup_preferences /home/steam/startup_preferences.template
 # Copy Xorg monitor config to set a default resolution
 # 复制 Xorg 显示器配置以设置默认分辨率
@@ -112,9 +135,9 @@ COPY --chown=steam:steam config/10-monitor.conf /etc/X11/xorg.conf.d/10-monitor.
 # 以 root 身份运行以允许启动时修复权限
 USER root
 
-# Expose game port (UDP) and VNC port (TCP)
-# 暴露游戏端口（UDP）和 VNC 端口（TCP）
-EXPOSE 24642/udp 5900/tcp
+# Expose game port (UDP) and Selkies web interface port (TCP)
+# 暴露游戏端口（UDP）和 Selkies 网页界面端口（TCP）
+EXPOSE 24642/udp 8080/tcp
 
 # Health check to ensure server is running
 # 健康检查确保服务器正在运行

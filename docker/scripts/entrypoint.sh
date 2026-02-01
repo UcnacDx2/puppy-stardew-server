@@ -346,48 +346,53 @@ if [ "$START_XVFB_FALLBACK" = "true" ]; then
     log_info "✓ Virtual display started on ${DISPLAY} (${RESOLUTION_WIDTH}x${RESOLUTION_HEIGHT})"
 fi
 
-# Step 6: Start VNC server (optional)
+# Step 6: Start Selkies web interface server (optional)
 if [ "$ENABLE_VNC" = "true" ]; then
-    log_step "Step 7: Starting VNC server..."
+    log_step "Step 7: Starting Selkies web interface..."
     echo "DISPLAY is set to: $DISPLAY"
     VNC_PASSWORD=${VNC_PASSWORD:-"stardew1"}
 
-    if [ ${#VNC_PASSWORD} -gt 8 ]; then
-        log_warn "VNC password > 8 chars, truncating to: ${VNC_PASSWORD:0:8}"
-        VNC_PASSWORD="${VNC_PASSWORD:0:8}"
-    fi
-restart
-    # Wait a bit for X server (Xorg 或 Xvfb) to be fully ready
+    # Wait a bit for X server (Xorg or Xvfb) to be fully ready
     sleep 2
 
-    # Start x11vnc 指向当前 DISPLAY（:0 或 :99）
-    log_info "Starting x11vnc on display ${DISPLAY} (port 5900)..."
-    x11vnc -display "${DISPLAY}" -forever -shared -passwd "$VNC_PASSWORD" -rfbport 5900 -noxdamage -bg 2>&1 | grep -v "^$"
+    # Start Selkies web server in background
+    log_info "Starting Selkies web interface on port 8080..."
+    log_warn "SECURITY: Selkies binds to 0.0.0.0, exposing port 8080 on all network interfaces"
+    log_warn "SECURITY: Ensure port 8080 is protected by firewall rules or network security groups"
+    log_warn "SECURITY: Only expose this port to trusted networks or users"
+    
+    # Set Selkies environment variables
+    export SELKIES_ENCODER=${SELKIES_ENCODER:-x264enc}
+    export SELKIES_ENABLE_RESIZE=${SELKIES_ENABLE_RESIZE:-true}
+    export SELKIES_FRAMERATE=${SELKIES_FRAMERATE:-30}
+    export SELKIES_BASIC_AUTH_PASSWORD="$VNC_PASSWORD"
+    
+    # Start Selkies-GStreamer using the portable distribution
+    /opt/selkies-gstreamer/selkies-gstreamer-run \
+        --addr=0.0.0.0 \
+        --port=8080 \
+        &
+    
+    SELKIES_PID=$!
+    
+    # Wait for Selkies to start
+    sleep 3
 
-    # Wait for x11vnc to start
-    sleep 2
-
-    # Verify VNC is running
-    if pgrep -x "x11vnc" >/dev/null; then
-        log_info "✓ VNC server started successfully on port 5900"
+    # Verify Selkies is running
+    if kill -0 $SELKIES_PID 2>/dev/null; then
+        log_info "✓ Selkies web interface started successfully on port 8080"
         log_info "  Password: $VNC_PASSWORD"
-        log_info "  Connect to: your-server-ip:5900"
-        # Start VNC monitor to keep it alive
-        if [ -f "/home/steam/scripts/vnc-monitor.sh" ]; then
-            log_info "Starting VNC health monitor..."
-            /home/steam/scripts/vnc-monitor.sh &
-            log_info "✓ VNC monitor started (30s check interval)"
-        fi
+        log_info "  Connect to: http://your-server-ip:8080"
     else
-        log_error "✗ VNC server failed to start"
+        log_error "✗ Selkies failed to start"
         log_error "Check logs above for errors"
     fi
 else
-    log_step "Step 7: VNC disabled (set ENABLE_VNC=true to enable)"
+    log_step "Step 7: Web remote access disabled (set ENABLE_VNC=true to enable)"
 fi
 
-# Step 7: Setup optimized game config for VNC display
-# 步骤 7.5：为VNC显示设置优化的游戏配置
+# Step 7: Setup optimized game config for web remote access display
+# 步骤 7.5：为 web 远程访问显示设置优化的游戏配置
 log_step "Step 7.5: Configuring game display settings..."
 
 CONFIG_DIR="/home/steam/.config/StardewValley"
@@ -402,8 +407,8 @@ mkdir -p "$CONFIG_DIR"
 if [ ! -f "$CONFIG_FILE" ]; then
     if [ -f "$TEMPLATE" ]; then
         cp "$TEMPLATE" "$CONFIG_FILE"
-        log_info "✓ Applied optimized display config (fullscreen mode for VNC)"
-        log_info "✓ 已应用优化的显示配置（VNC全屏模式）"
+        log_info "✓ Applied optimized display config (fullscreen mode for web remote access)"
+        log_info "✓ 已应用优化的显示配置（web 远程访问全屏模式）"
     else
         log_warn "⚠ Template not found, game will use default settings"
     fi
@@ -432,10 +437,12 @@ log_info "================================================"
 log_info ""
 log_info "To create/load a save:"
 log_info "要创建/加载存档："
-log_info "  1. Connect via VNC: localhost:5900 (password: $VNC_PASSWORD)"
-log_info "  1. 通过 VNC 连接：localhost:5900（密码：$VNC_PASSWORD）"
-log_info "  2. Click CO-OP → Start new co-op farm"
-log_info "  2. 点击 CO-OP → 开始新的联机农场"
+log_info "  1. Open web browser and go to: http://your-server-ip:8080"
+log_info "  1. 打开浏览器访问：http://your-server-ip:8080"
+log_info "  2. Enter password if prompted"
+log_info "  2. 如有提示，输入您的密码"
+log_info "  3. Click CO-OP → Start new co-op farm"
+log_info "  3. 点击 CO-OP → 开始新的联机农场"
 log_info ""
 log_info "Players connect via:"
 log_info "玩家连接方式："

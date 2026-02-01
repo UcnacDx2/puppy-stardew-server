@@ -31,8 +31,8 @@ services:
       - STEAM_USERNAME=${STEAM_USERNAME}
       - STEAM_PASSWORD=${STEAM_PASSWORD}
 
-      # VNC settings - OPTIONAL (for first-time setup)
-      # VNC 设置 - 可选（用于首次设置）
+      # Web remote access settings - OPTIONAL (for first-time setup)
+      # Web 远程访问设置 - 可选（用于首次设置）
       - ENABLE_VNC=${ENABLE_VNC:-true}
       - VNC_PASSWORD=${VNC_PASSWORD:-stardew123}
 
@@ -47,9 +47,9 @@ services:
       # 游戏服务器端口（必需）
       - "24642:24642/udp"
 
-      # VNC port (OPTIONAL - only needed for initial setup)
-      # VNC 端口（可选 - 仅首次设置需要）
-      - "5900:5900/tcp"
+      # Selkies web interface port (OPTIONAL - only needed for initial setup)
+      # Selkies web 界面端口（可选 - 仅首次设置需要）
+      - "8080:8080/tcp"
 
     # Persistent data volumes (bind mounts)
     # 持久化数据卷（绑定挂载）
