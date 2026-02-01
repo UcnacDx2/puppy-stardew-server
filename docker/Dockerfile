@@ -33,12 +33,25 @@ RUN dpkg --add-architecture i386 && \
     libgl1-mesa-dri libgl1-mesa-glx mesa-utils libegl1-mesa \
     xserver-xorg-core xserver-xorg-video-modesetting x11-xserver-utils x11-apps xserver-xorg-video-dummy \
     xvfb \
-    x11vnc \
     openbox \
     expect \
     xdotool \
     dotnet-runtime-6.0 \
+    python3 \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    gstreamer1.0-tools \
+    gstreamer1.0-x \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Selkies-GStreamer as root
+RUN pip3 install --no-cache-dir selkies-gstreamer
 
 # Create non-root user for security
 # 创建非 root 用户以提高安全性
@@ -91,12 +104,11 @@ COPY --chown=steam:steam scripts/log-monitor.sh /home/steam/scripts/log-monitor.
 COPY --chown=steam:steam scripts/view-logs.sh /home/steam/scripts/view-logs.sh
 COPY --chown=steam:steam scripts/auto-enable-server.sh /home/steam/scripts/auto-enable-server.sh
 COPY --chown=steam:steam scripts/auto-handle-readycheck.sh /home/steam/scripts/auto-handle-readycheck.sh
-COPY --chown=steam:steam scripts/vnc-monitor.sh /home/steam/scripts/vnc-monitor.sh
 COPY --chown=steam:steam scripts/set-resolution.sh /home/steam/scripts/set-resolution.sh
 RUN chmod +x /home/steam/entrypoint.sh /home/steam/scripts/*.sh
 
-# Copy optimized game config template for VNC display
-# 复制VNC显示优化的游戏配置模板
+# Copy optimized game config template for web remote access display
+# 复制 web 远程访问显示优化的游戏配置模板
 COPY --chown=steam:steam config/startup_preferences /home/steam/startup_preferences.template
 # Copy Xorg monitor config to set a default resolution
 # 复制 Xorg 显示器配置以设置默认分辨率
@@ -106,9 +118,9 @@ COPY --chown=steam:steam config/10-monitor.conf /etc/X11/xorg.conf.d/10-monitor.
 # 以 root 身份运行以允许启动时修复权限
 USER root
 
-# Expose game port (UDP) and VNC port (TCP)
-# 暴露游戏端口（UDP）和 VNC 端口（TCP）
-EXPOSE 24642/udp 5900/tcp
+# Expose game port (UDP) and Selkies web interface port (TCP)
+# 暴露游戏端口（UDP）和 Selkies 网页界面端口（TCP）
+EXPOSE 24642/udp 8080/tcp
 
 # Health check to ensure server is running
 # 健康检查确保服务器正在运行
