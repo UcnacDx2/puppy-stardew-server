@@ -13,6 +13,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![Docker Image Size](https://img.shields.io/docker/image-size/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![GitHub Stars](https://img.shields.io/github/stars/truman-world/puppy-stardew-server)](https://github.com/truman-world/puppy-stardew-server)
+[![Build and Push Docker Image](https://github.com/UcnacDx2/puppy-stardew-server/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/UcnacDx2/puppy-stardew-server/actions/workflows/docker-build-push.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 [English](README.md) | 中文

@@ -13,6 +13,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![Docker Image Size](https://img.shields.io/docker/image-size/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![GitHub Stars](https://img.shields.io/github/stars/truman-world/puppy-stardew-server)](https://github.com/truman-world/puppy-stardew-server)
+[![Build and Push Docker Image](https://github.com/UcnacDx2/puppy-stardew-server/actions/workflows/docker-build-push.yml/badge.svg)](https://github.com/UcnacDx2/puppy-stardew-server/actions/workflows/docker-build-push.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 English | [中文](README_CN.md)
@@ -327,6 +328,20 @@ docker compose down
 docker pull truemanlive/puppy-stardew-server:latest
 docker compose up -d
 ```
+
+**Alternative: Using GHCR (GitHub Container Registry)**
+
+This repository also publishes images to GitHub Container Registry. To use GHCR images:
+
+```bash
+# Pull from GHCR
+docker pull ghcr.io/ucnacdx2/puppy-stardew-server:latest
+
+# Or update docker-compose.yml to use GHCR
+# Change: image: truemanlive/puppy-stardew-server:v1.0.61
+# To:     image: ghcr.io/ucnacdx2/puppy-stardew-server:latest
+```
+
 </details>
 
 <details>
