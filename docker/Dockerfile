@@ -29,6 +29,9 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     curl \
     unzip \
     ca-certificates \
+    python3-pip \
+    python3-gi \
+    python3-setuptools \
     libsdl2-2.0-0 \
     tmux \
     net-tools \
@@ -69,7 +72,17 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
 # Using v1.5.2 for better compatibility with Ubuntu 22.04 and Python 3.10
 # v1.6.x has known issues with PyUnicode_FromFormat and resize handler crashes
 RUN cd /opt && \
-    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v1.5.2/selkies-gstreamer-v1.5.2-ubuntu22.04.tgz" | tar -xzf - && \
+    curl -fsSL "https://github.com/selkies-project/selkies-gstreamer/releases/download/v1.5.2/selkies-gstreamer-v1.5.2-ubuntu22.04.tgz" | tar -xzf - && \
+    curl -fsSL -o /tmp/selkies_gstreamer-1.5.2-py3-none-any.whl "https://github.com/selkies-project/selkies-gstreamer/releases/download/v1.5.2/selkies_gstreamer-1.5.2-py3-none-any.whl" && \
+    pip3 install --no-cache-dir /tmp/selkies_gstreamer-1.5.2-py3-none-any.whl && \
+    rm -f /tmp/selkies_gstreamer-1.5.2-py3-none-any.whl && \
+    mkdir -p /opt/selkies-gstreamer && \
+    echo '#!/bin/bash\n\
+# Wrapper script for selkies-gstreamer\n\
+export GSTREAMER_PATH=/opt/gstreamer\n\
+source /opt/gstreamer/gst-env\n\
+exec selkies-gstreamer "$@"\n\
+' > /opt/selkies-gstreamer/selkies-gstreamer-run && \
     chmod +x /opt/selkies-gstreamer/selkies-gstreamer-run
 
 # Create non-root user for security
