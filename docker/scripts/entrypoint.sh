@@ -350,6 +350,7 @@ fi
 if [ "$ENABLE_VNC" = "true" ]; then
     log_step "Step 7: Starting Selkies web interface..."
     echo "DISPLAY is set to: $DISPLAY"
+    VNC_USERNAME=${VNC_USERNAME:-"user"}
     VNC_PASSWORD=${VNC_PASSWORD:-"stardew1"}
 
     # Wait a bit for X server (Xorg or Xvfb) to be fully ready
@@ -365,6 +366,7 @@ if [ "$ENABLE_VNC" = "true" ]; then
     export SELKIES_ENCODER=${SELKIES_ENCODER:-x264enc}
     export SELKIES_ENABLE_RESIZE=${SELKIES_ENABLE_RESIZE:-true}
     export SELKIES_FRAMERATE=${SELKIES_FRAMERATE:-30}
+    export SELKIES_BASIC_AUTH_USER="$VNC_USERNAME"
     export SELKIES_BASIC_AUTH_PASSWORD="$VNC_PASSWORD"
     
     # Start Selkies-GStreamer using the portable distribution
@@ -381,6 +383,7 @@ if [ "$ENABLE_VNC" = "true" ]; then
     # Verify Selkies is running
     if kill -0 $SELKIES_PID 2>/dev/null; then
         log_info "✓ Selkies web interface started successfully on port 8080"
+        log_info "  Username: $VNC_USERNAME"
         log_info "  Password: $VNC_PASSWORD"
         log_info "  Connect to: http://your-server-ip:8080"
     else
