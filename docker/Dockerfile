@@ -16,17 +16,19 @@ LABEL maintainer="truemanlive" \
       description="Stardew Valley dedicated server with auto-pause and instant sleep" \
       version="1.0.61"
 # RUN sed -i.bak -E 's#https?://(archive|security)\.ubuntu\.com/ubuntu/#http://mirrors.aliyun.com/ubuntu/#g' /etc/apt/sources.list
-# Enable 32-bit architecture for SteamCMD
-# 启用32位架构支持以安装SteamCMD
-RUN dpkg --add-architecture i386 && \
+
+# Get build platform information
+ARG TARGETARCH
+
+# Enable 32-bit architecture for SteamCMD (amd64 only)
+# 启用32位架构支持以安装SteamCMD（仅限amd64）
+RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     apt-get update && apt-get install -y --no-install-recommends \
     wget \
     curl \
     unzip \
     ca-certificates \
-    lib32gcc-s1 \
     libsdl2-2.0-0 \
-    libcurl3-gnutls:i386 \
     tmux \
     net-tools \
     procps \
@@ -38,6 +40,7 @@ RUN dpkg --add-architecture i386 && \
     expect \
     xdotool \
     dotnet-runtime-6.0 \
+    $(if [ "$TARGETARCH" = "amd64" ]; then echo "lib32gcc-s1 libcurl3-gnutls:i386"; fi) \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
