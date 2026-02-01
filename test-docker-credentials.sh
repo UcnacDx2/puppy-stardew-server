@@ -113,7 +113,7 @@ if echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin 2>
     print_info "Your credentials are correct. You can now configure them as GitHub secrets:"
     print_info "您的凭证正确。现在您可以将它们配置为 GitHub secrets："
     echo ""
-    echo "  1. Go to: https://github.com/UcnacDx2/puppy-stardew-server/settings/secrets/actions"
+    echo "  1. Go to your GitHub repository → Settings → Secrets and variables → Actions"
     echo "  2. Add/Update these secrets:"
     echo "     - DOCKER_USERNAME: $DOCKER_USERNAME"
     echo "     - DOCKER_PASSWORD: <your Personal Access Token>"

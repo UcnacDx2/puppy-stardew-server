@@ -34,7 +34,7 @@ The `docker-build.yml` workflow requires two GitHub secrets to authenticate with
 
 ### Step 2: Configure GitHub Repository Secrets
 
-1. Go to your GitHub repository: https://github.com/UcnacDx2/puppy-stardew-server
+1. Go to your GitHub repository (Settings tab)
 2. Click on **Settings** (in the repository, not your account)
 3. In the left sidebar, click **Secrets and variables** → **Actions**
 4. Add or update the following secrets:
