@@ -13,6 +13,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  # IMAGE_NAME will be lowercase repository name (e.g., ucnacdx2/puppy-stardew-server)
+  # GHCR automatically converts to lowercase
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -61,6 +63,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          # Currently targeting linux/amd64 only
+          # Multi-platform builds (e.g., linux/arm64) can be added in the future if needed
+          # Note: Multi-platform builds require QEMU setup and significantly increase build time
           platforms: linux/amd64
 
       - name: Image digest
