@@ -1,6 +1,15 @@
 #!/bin/bash
 # Selkies Web Interface Diagnostic Script
 # Selkies 网页界面诊断脚本
+#
+# NOTE: This script retains the filename 'diagnose-vnc.sh' for backward 
+# compatibility with existing documentation and user scripts, but it now
+# diagnoses the Selkies web interface (port 8080) instead of the old
+# x11vnc setup (port 5900).
+#
+# 注意：此脚本保留 'diagnose-vnc.sh' 文件名以保持向后兼容性，
+# 但现在诊断 Selkies 网页界面（端口 8080）而不是旧的 x11vnc（端口 5900）。
+#
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
