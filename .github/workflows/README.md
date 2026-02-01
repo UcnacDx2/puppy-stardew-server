@@ -29,8 +29,10 @@ The workflow runs on the following events:
 
 Before the workflow can push images to Docker Hub, you need to configure the following repository secrets:
 
-1. **`DOCKER_USERNAME`**: Your Docker Hub username (e.g., `truemanlive`)
-2. **`DOCKER_PASSWORD`**: Your Docker Hub access token or password
+1. **`DOCKER_USERNAME`**: Your Docker Hub username
+2. **`DOCKER_PASSWORD`**: Your Docker Hub Personal Access Token (PAT) - **NOT** your password
+
+**IMPORTANT**: `DOCKER_PASSWORD` must be a Personal Access Token (starting with `dckr_pat_`), not your actual Docker Hub password. Docker Hub no longer accepts passwords for authentication.
 
 #### How to Configure Secrets
 
@@ -38,10 +40,20 @@ Before the workflow can push images to Docker Hub, you need to configure the fol
 2. Click on **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
 4. Add both secrets:
-   - Name: `DOCKER_USERNAME`, Value: Your Docker Hub username
-   - Name: `DOCKER_PASSWORD`, Value: Your Docker Hub access token
+   - Name: `DOCKER_USERNAME`, Value: Your Docker Hub username (must match exactly)
+   - Name: `DOCKER_PASSWORD`, Value: Your Docker Hub Personal Access Token (PAT)
 
-**Note**: It's recommended to use a Docker Hub access token instead of your password. You can create one at https://hub.docker.com/settings/security
+**How to create a Docker Hub Personal Access Token**:
+1. Log in to Docker Hub at https://hub.docker.com
+2. Go to **Account Settings** → **Security**: https://hub.docker.com/settings/security
+3. Click **"New Access Token"**
+4. Give it a description (e.g., "GitHub Actions")
+5. Select **"Read & Write"** permissions (required for pushing images)
+6. Click **"Generate"**
+7. **Copy the entire token immediately** - you won't be able to see it again!
+8. The token will start with `dckr_pat_` followed by a long random string
+
+**Note**: The Docker image will be pushed to `<your-username>/puppy-stardew-server`, where `<your-username>` is the value from your `DOCKER_USERNAME` secret.
 
 ### Usage Examples
 
@@ -81,8 +93,18 @@ After a successful build, you can find:
 ### Troubleshooting
 
 #### Build Fails with "unauthorized" error
-- Check that `DOCKER_USERNAME` and `DOCKER_PASSWORD` secrets are correctly set
-- Verify that the Docker Hub access token has write permissions
+- **Most common cause**: Your `DOCKER_USERNAME` in GitHub secrets doesn't match your actual Docker Hub username
+  - Make sure `DOCKER_USERNAME` is spelled exactly as it appears on Docker Hub (case-sensitive)
+  - The workflow pushes images to `<DOCKER_USERNAME>/puppy-stardew-server`
+  - You can only push to repositories under your own Docker Hub account
+- **Second most common cause**: Using password instead of Personal Access Token
+  - `DOCKER_PASSWORD` must be a Personal Access Token (starting with `dckr_pat_`)
+  - Create a new PAT at https://hub.docker.com/settings/security
+  - Select "Read & Write" permissions when creating the token
+- **Other causes**:
+  - PAT has expired or been revoked - create a new one
+  - PAT doesn't have write permissions - create a new one with "Read & Write"
+  - Extra whitespace in the secret values - re-enter them carefully
 
 #### Build Fails with "context" or "Dockerfile not found" error
 - Ensure the Dockerfile exists at `docker/Dockerfile`

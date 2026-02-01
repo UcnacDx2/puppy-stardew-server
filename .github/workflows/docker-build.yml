@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_IMAGE: truemanlive/puppy-stardew-server
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/puppy-stardew-server
   PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
