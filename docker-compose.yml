@@ -84,12 +84,12 @@ services:
     #
     # Adjust based on your server specs:
     # 根据服务器规格调整：
-    # - 2GB RAM server: Set memory to 1.5G
-    # - 4GB RAM server: Keep at 2G
+    # - 2GB RAM server: Set memory to 1.5G, CPUs to 1.5
+    # - 4GB RAM server: Keep at 2G memory, 2.0 CPUs
     # - 8GB+ RAM server: Can increase to 4G for 8+ players
     #
-    # - 2GB 内存服务器：设置内存为 1.5G
-    # - 4GB 内存服务器：保持 2G
+    # - 2GB 内存服务器：设置内存为 1.5G，CPU 为 1.5
+    # - 4GB 内存服务器：保持 2G 内存，2.0 CPU
     # - 8GB+ 内存服务器：8+ 玩家时可增加到 4G
     #
     # If using GPU, consider reserving more memory
