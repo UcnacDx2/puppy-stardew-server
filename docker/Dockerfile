@@ -65,11 +65,11 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     fi && \
     rm -rf /var/lib/apt/lists/*
 
-# Download and install Selkies-GStreamer portable distribution
+# Download and install Selkies-GStreamer distribution
 # Using v1.5.2 for better compatibility with Ubuntu 22.04 and Python 3.10
 # v1.6.x has known issues with PyUnicode_FromFormat and resize handler crashes
 RUN cd /opt && \
-    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v1.5.2/selkies-gstreamer-portable-v1.5.2_amd64.tar.gz" | tar -xzf - && \
+    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v1.5.2/selkies-gstreamer-v1.5.2-ubuntu22.04.tgz" | tar -xzf - && \
     chmod +x /opt/selkies-gstreamer/selkies-gstreamer-run
 
 # Create non-root user for security
