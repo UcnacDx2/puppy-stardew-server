@@ -30,8 +30,10 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     unzip \
     ca-certificates \
     python3-pip \
+    python3-dev \
     python3-gi \
     python3-setuptools \
+    python3-wheel \
     libsdl2-2.0-0 \
     tmux \
     net-tools \
@@ -40,6 +42,7 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     tar \
     gzip \
     libpulse0 \
+    pulseaudio \
     wayland-protocols \
     libwayland-dev \
     libwayland-egl1 \
@@ -56,12 +59,35 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
     libxtst6 \
     libxext6 \
     libgl1-mesa-dri libgl1-mesa-glx mesa-utils libegl1-mesa \
+    libgl-dev libgles-dev libglvnd-dev \
     xserver-xorg-video-modesetting \
     xserver-xorg-video-dummy \
     xvfb \
     openbox \
     expect \
     xdotool \
+    xclip \
+    wmctrl \
+    udev \
+    libgudev-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libgtk2.0-bin \
+    libsoup2.4-1 \
+    libsoup-gnome2.4-1 \
+    libsrtp2-1 \
+    lame \
+    libopus0 \
+    libwebrtc-audio-processing1 \
+    libcairo-gobject2 \
+    libpangocairo-1.0-0 \
+    libgirepository-1.0-1 \
+    libopenjp2-7 \
+    libjpeg-dev \
+    libwebp-dev \
+    libvpx-dev \
+    zlib1g-dev \
+    x264 \
+    xcvt \
     dotnet-runtime-6.0 && \
     if [ "$TARGETARCH" = "amd64" ]; then \
         apt-get install -y --no-install-recommends lib32gcc-s1 libcurl3-gnutls:i386; \
@@ -73,6 +99,7 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then dpkg --add-architecture i386; fi && \
 # v1.6.x has known issues with PyUnicode_FromFormat and resize handler crashes
 RUN cd /opt && \
     curl -fsSL "https://github.com/selkies-project/selkies-gstreamer/releases/download/v1.5.2/selkies-gstreamer-v1.5.2-ubuntu22.04.tgz" | tar -xzf - && \
+    curl -fsSL "https://github.com/selkies-project/selkies-gstreamer/releases/download/v1.5.2/selkies-gstreamer-web-v1.5.2.tgz" | tar -xzf - && \
     curl -fsSL -o /tmp/selkies_gstreamer-1.5.2-py3-none-any.whl "https://github.com/selkies-project/selkies-gstreamer/releases/download/v1.5.2/selkies_gstreamer-1.5.2-py3-none-any.whl" && \
     pip3 install --no-cache-dir /tmp/selkies_gstreamer-1.5.2-py3-none-any.whl && \
     rm -f /tmp/selkies_gstreamer-1.5.2-py3-none-any.whl && \
